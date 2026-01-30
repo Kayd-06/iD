@@ -125,12 +125,12 @@ export function svgPoints(projection, context) {
         enter.each(function(d) {
             if (isAddressPoint(d.tags)) return;
             d3_select(this)
-            .append('ellipse')
-            .attr('cx', 0.5)
-            .attr('cy', 1)
-            .attr('rx', 6.5)
-            .attr('ry', 3)
-            .attr('class', 'stroke');
+                .append('ellipse')
+                .attr('cx', 0.5)
+                .attr('cy', 1)
+                .attr('rx', 6.5)
+                .attr('ry', 3)
+                .attr('class', 'stroke');
         });
 
         enter
@@ -144,8 +144,10 @@ export function svgPoints(projection, context) {
             .attr('width', '12px')
             .attr('height', '12px');
 
-        groups = groups
-            .merge(enter)
+        enter.call(svgTagClasses());
+
+        groups = enter
+            .merge(groups)
             .attr('transform', svgPointTransform(projection))
             .classed('added', function(d) {
                 return !base.entities[d.id]; // if it doesn't exist in the base graph, it's new
@@ -155,8 +157,7 @@ export function svgPoints(projection, context) {
             })
             .classed('retagged', function(d) {
                 return base.entities[d.id] && !deepEqual(graph.entities[d.id].tags, base.entities[d.id].tags);
-            })
-            .call(svgTagClasses());
+            });
 
         groups.select('.shadow');   // propagate bound data
         groups.select('.stroke');   // propagate bound data

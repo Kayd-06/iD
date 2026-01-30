@@ -29,11 +29,23 @@ export function svgTagClasses() {
 
             var t = _tags(entity);
 
+            // Performance optimization: skip recomputation if entity version and tags function haven't changed
+            // Entity version (v) is bumped whenever tags/geometry change, so classes are stable
+            // Use (entity.v || 0) to normalize undefined to 0, matching osmEntity.key() behavior
+            var entityVersion = entity.v || 0;
+            if (this._tagClassesVersion !== undefined &&
+                this._tagClassesVersion === entityVersion &&
+                this._tagClassesFunc === _tags) {
+                return;
+            }
+
             var computed = tagClasses.getClassesString(t, value);
 
             if (computed !== value) {
                 d3_select(this).attr('class', computed);
             }
+            this._tagClassesVersion = entityVersion;
+            this._tagClassesFunc = _tags;
         });
     };
 

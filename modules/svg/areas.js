@@ -54,7 +54,7 @@ export function svgAreas(projection, context) {
             }
             return d.properties.nodes.some(function(n) {
                 return !base.entities[n.id] ||
-                       !deepEqual(graph.entities[n.id].loc, base.entities[n.id].loc);
+                    !deepEqual(graph.entities[n.id].loc, base.entities[n.id].loc);
             });
         };
 
@@ -117,23 +117,23 @@ export function svgAreas(projection, context) {
         };
 
         var clipPaths = context.surface().selectAll('defs').selectAll('.clipPath-osm')
-           .filter(filter)
-           .data(data.clip, osmEntity.key);
+            .filter(filter)
+            .data(data.clip, osmEntity.key);
 
         clipPaths.exit()
-           .remove();
+            .remove();
 
         var clipPathsEnter = clipPaths.enter()
-           .append('clipPath')
-           .attr('class', 'clipPath-osm')
+            .append('clipPath')
+            .attr('class', 'clipPath-osm')
            .attr('id', function(entity) { return 'ideditor-' + entity.id + '-clippath'; });
 
         clipPathsEnter
-           .append('path');
+            .append('path');
 
         clipPaths.merge(clipPathsEnter)
-           .selectAll('path')
-           .attr('d', path);
+            .selectAll('path')
+            .attr('d', path);
 
 
         var drawLayer = selection.selectAll('.layer-osm.areas');
@@ -167,13 +167,20 @@ export function svgAreas(projection, context) {
             }
         }
 
-        paths = paths.enter()
+        var pathsEnter = paths.enter()
             .insert('path', sortedByArea)
-            .merge(paths)
-            .each(function(entity) {
+            .each(function (entity) {
                 var layer = this.parentNode.__data__;
                 this.setAttribute('class', entity.type + ' area ' + layer + ' ' + entity.id);
+            });
 
+        pathsEnter
+            .call(svgTagClasses());
+
+        paths = pathsEnter
+            .merge(paths)
+            .each(function (entity) {
+                var layer = this.parentNode.__data__;
                 if (layer === 'fill') {
                     this.setAttribute('clip-path', 'url(#ideditor-' + entity.id + '-clippath)');
                     this.style.fill = this.style.stroke = getPatternStyle(entity.tags);
@@ -192,7 +199,6 @@ export function svgAreas(projection, context) {
                     base.entities[d.id] &&
                     !deepEqual(graph.entities[d.id].tags, base.entities[d.id].tags);
             })
-            .call(svgTagClasses())
             .attr('d', path);
 
 

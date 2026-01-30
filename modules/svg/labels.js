@@ -195,14 +195,16 @@ export function svgLabels(projection, context) {
 
         var gj = [];
         if (context.getDebug('collision')) {
-            gj = rtree.all().map(function(d) {
-                return { type: 'Polygon', coordinates: [[
-                    [d.minX, d.minY],
-                    [d.maxX, d.minY],
-                    [d.maxX, d.maxY],
-                    [d.minX, d.maxY],
-                    [d.minX, d.minY]
-                ]]};
+            gj = rtree.all().map(function (d) {
+                return {
+                    type: 'Polygon', coordinates: [[
+                        [d.minX, d.minY],
+                        [d.maxX, d.minY],
+                        [d.maxX, d.maxY],
+                        [d.minX, d.maxY],
+                        [d.minX, d.minY]
+                    ]]
+                };
             });
         }
 
@@ -442,7 +444,7 @@ export function svgLabels(projection, context) {
 
             // % along the line to attempt to place the label
             var lineOffsets = [50, 45, 55, 40, 60, 35, 65, 30, 70,
-                               25, 75, 20, 80, 15, 95, 10, 90, 5, 95];
+                              25, 75, 20, 80, 15, 95, 10, 90, 5, 95];
             var padding = 3;
 
             for (var i = 0; i < lineOffsets.length; i++) {
@@ -787,6 +789,8 @@ export function svgLabels(projection, context) {
 
 
 const _textWidthCache = {};
+let _measureElem;
+
 export function textWidth(text, size, container) {
     let c = _textWidthCache[size];
     if (!c) c = _textWidthCache[size] = {};
@@ -794,13 +798,22 @@ export function textWidth(text, size, container) {
     if (c[text]) {
         return c[text];
     }
-    const elem = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    elem.style.fontSize = `${size}px`;
-    elem.style.fontWeight = 'bold';
-    elem.textContent = text;
-    container.appendChild(elem);
-    c[text] = elem.getComputedTextLength();
-    elem.remove();
+
+    if (!_measureElem) {
+        _measureElem = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        _measureElem.style.fontWeight = 'bold';
+        _measureElem.style.visibility = 'hidden';
+        _measureElem.style.pointerEvents = 'none';
+    }
+
+    if (_measureElem.parentElement !== container) {
+        container.appendChild(_measureElem);
+    }
+
+    _measureElem.style.fontSize = `${size}px`;
+    _measureElem.textContent = text;
+    c[text] = _measureElem.getComputedTextLength();
+
     return c[text];
 }
 

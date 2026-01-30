@@ -23,6 +23,17 @@ function onewayArrowColour(tags) {
 
 export function svgLines(projection, context) {
     var detected = utilDetect();
+    var _tagHandler;
+    var _tagHandlerGraph;
+
+    function getTagHandler(graph) {
+        if (_tagHandlerGraph === graph && _tagHandler) {
+            return _tagHandler;
+        }
+        _tagHandlerGraph = graph;
+        _tagHandler = svgTagClasses().tags(svgRelationMemberTags(graph));
+        return _tagHandler;
+    }
 
     var highway_stack = {
         motorway: 0,
@@ -77,7 +88,7 @@ export function svgLines(projection, context) {
             }
             return d.properties.nodes.some(function(n) {
                 return !base.entities[n.id] ||
-                       !deepEqual(graph.entities[n.id].loc, base.entities[n.id].loc);
+                    !deepEqual(graph.entities[n.id].loc, base.entities[n.id].loc);
             });
         };
 
@@ -182,11 +193,10 @@ export function svgLines(projection, context) {
                         base.entities[d.id] &&
                         !deepEqual(graph.entities[d.id].tags, base.entities[d.id].tags);
                 })
-                .call(svgTagClasses())
                 .merge(lines)
                 .sort(waystack)
                 .attr('d', getPath)
-                .call(svgTagClasses().tags(svgRelationMemberTags(graph)));
+                .call(getTagHandler(graph));
 
             return selection;
         }
@@ -249,10 +259,10 @@ export function svgLines(projection, context) {
         for (var i = 0; i < entities.length; i++) {
             var entity = entities[i];
             if (entity.geometry(graph) === 'line'
-                       // to render side-markers for coastlines (see
-                       // https://github.com/openstreetmap/iD/issues/9293)
-                    || entity.geometry(graph) === 'area' && entity.sidednessIdentifier
-                        && entity.sidednessIdentifier() === 'coastline') {
+                // to render side-markers for coastlines (see
+                // https://github.com/openstreetmap/iD/issues/9293)
+                || entity.geometry(graph) === 'area' && entity.sidednessIdentifier
+                && entity.sidednessIdentifier() === 'coastline') {
                 ways.push(entity);
             }
         }
