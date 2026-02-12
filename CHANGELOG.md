@@ -50,10 +50,12 @@ _Breaking developer changes, which may affect downstream projects or sites that 
 * Warn when two features cross each other on same `layer`, regardless of `bridge` / `tunnel` tags ([#10999], thanks [@homersimpsons])
 #### :bug: Bugfixes
 * Fix some gpx/geojson properties not visible, such as numbers or complex data structures ([#11636], thanks [@k-yle])
+* Fix error setting custom background ([#11862], thanks [@Kayd-06])
 #### :earth_asia: Localization
 * Add Moroccan phone number formats ([#11651], thanks [@ilias52730])
 * The Languages field shows language names in your preferred language. ([#11699], thanks [@Razen04])
 * When viewing the help information for tags or presets, use locale-specific properties if available ([#11760], thanks [@k-yle])
+* Show country names in your preferred language and country flag emoji in the Country field dropdown ([#11783], thanks [@Razen04])
 #### :hourglass: Performance
 #### :mortar_board: Walkthrough / Help
 #### :rocket: Presets
@@ -75,11 +77,14 @@ _Breaking developer changes, which may affect downstream projects or sites that 
 [#11784]: https://github.com/openstreetmap/iD/pull/11784
 [#11794]: https://github.com/openstreetmap/iD/pull/11794
 [#11799]: https://github.com/openstreetmap/iD/issues/11799
+[#11783]: https://github.com/openstreetmap/iD/pull/11783
+[#11862]: https://github.com/openstreetmap/iD/pull/11862
 [@ilias52730]: https://github.com/ilias52730
 [@Razen04]: https://github.com/Razen04
 [@homersimpsons]: https://github.com/homersimpsons
 [@omsaraykar]: https://github.com/omsaraykar
 [@Kaushik4141]: https://github.com/Kaushik4141
+[@Kayd-06]: https://github.com/Kayd-06
 
 
 # v2.37.3
