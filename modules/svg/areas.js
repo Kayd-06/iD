@@ -28,7 +28,7 @@ export function svgAreas(projection, context) {
         // The targets and nopes will be MultiLineString sub-segments of the ways
         var data = { targets: [], nopes: [] };
 
-        entities.forEach(function(way) {
+        entities.forEach(function (way) {
             var features = svgSegmentWay(way, graph, activeID);
             data.targets.push.apply(data.targets, features.passive);
             data.nopes.push.apply(data.nopes, features.active);
@@ -38,21 +38,21 @@ export function svgAreas(projection, context) {
         // Targets allow hover and vertex snapping
         var targetData = data.targets.filter(getPath);
         var targets = selection.selectAll('.area.target-allowed')
-            .filter(function(d) { return filter(d.properties.entity); })
+            .filter(function (d) { return filter(d.properties.entity); })
             .data(targetData, function key(d) { return d.id; });
 
         // exit
         targets.exit()
             .remove();
 
-        var segmentWasEdited = function(d) {
+        var segmentWasEdited = function (d) {
             var wayID = d.properties.entity.id;
             // if the whole line was edited, don't draw segment changes
             if (!base.entities[wayID] ||
                 !deepEqual(graph.entities[wayID].nodes, base.entities[wayID].nodes)) {
                 return false;
             }
-            return d.properties.nodes.some(function(n) {
+            return d.properties.nodes.some(function (n) {
                 return !base.entities[n.id] ||
                     !deepEqual(graph.entities[n.id].loc, base.entities[n.id].loc);
             });
@@ -63,14 +63,14 @@ export function svgAreas(projection, context) {
             .append('path')
             .merge(targets)
             .attr('d', getPath)
-            .attr('class', function(d) { return 'way area target target-allowed ' + targetClass + d.id; })
+            .attr('class', function (d) { return 'way area target target-allowed ' + targetClass + d.id; })
             .classed('segment-edited', segmentWasEdited);
 
 
         // NOPE
         var nopeData = data.nopes.filter(getPath);
         var nopes = selection.selectAll('.area.target-nope')
-            .filter(function(d) { return filter(d.properties.entity); })
+            .filter(function (d) { return filter(d.properties.entity); })
             .data(nopeData, function key(d) { return d.id; });
 
         // exit
@@ -82,7 +82,7 @@ export function svgAreas(projection, context) {
             .append('path')
             .merge(nopes)
             .attr('d', getPath)
-            .attr('class', function(d) { return 'way area target target-nope ' + nopeClass + d.id; })
+            .attr('class', function (d) { return 'way area target target-nope ' + nopeClass + d.id; })
             .classed('segment-edited', segmentWasEdited);
     }
 
@@ -105,9 +105,9 @@ export function svgAreas(projection, context) {
 
         var fills = Object.values(areas).filter(function hasPath(a) { return path(a.entity); });
         fills.sort(function areaSort(a, b) { return b.area - a.area; });
-        fills = fills.map(function(a) { return a.entity; });
+        fills = fills.map(function (a) { return a.entity; });
 
-        var strokes = fills.filter(function(area) { return area.type === 'way'; });
+        var strokes = fills.filter(function (area) { return area.type === 'way'; });
 
         var data = {
             clip: fills,
@@ -126,7 +126,7 @@ export function svgAreas(projection, context) {
         var clipPathsEnter = clipPaths.enter()
             .append('clipPath')
             .attr('class', 'clipPath-osm')
-           .attr('id', function(entity) { return 'ideditor-' + entity.id + '-clippath'; });
+            .attr('id', function (entity) { return 'ideditor-' + entity.id + '-clippath'; });
 
         clipPathsEnter
             .append('path');
@@ -146,20 +146,20 @@ export function svgAreas(projection, context) {
 
         areagroup = areagroup.enter()
             .append('g')
-            .attr('class', function(d) { return 'areagroup area-' + d; })
+            .attr('class', function (d) { return 'areagroup area-' + d; })
             .merge(areagroup);
 
         var paths = areagroup
             .selectAll('path')
             .filter(filter)
-            .data(function(layer) { return data[layer]; }, osmEntity.key);
+            .data(function (layer) { return data[layer]; }, osmEntity.key);
 
         paths.exit()
             .remove();
 
 
         var fillpaths = selection.selectAll('.area-fill path.area').nodes();
-        var bisect = d3_bisector(function(node) { return -node.__data__.area(graph); }).left;
+        var bisect = d3_bisector(function (node) { return -node.__data__.area(graph); }).left;
 
         function sortedByArea(entity) {
             if (this._parent.__data__ === 'fill') {
@@ -186,15 +186,15 @@ export function svgAreas(projection, context) {
                     this.style.fill = this.style.stroke = getPatternStyle(entity.tags);
                 }
             })
-            .classed('added', function(d) {
+            .classed('added', function (d) {
                 return !base.entities[d.id];
             })
-            .classed('geometry-edited', function(d) {
+            .classed('geometry-edited', function (d) {
                 return graph.entities[d.id] &&
                     base.entities[d.id] &&
                     !deepEqual(graph.entities[d.id].nodes, base.entities[d.id].nodes);
             })
-            .classed('retagged', function(d) {
+            .classed('retagged', function (d) {
                 return graph.entities[d.id] &&
                     base.entities[d.id] &&
                     !deepEqual(graph.entities[d.id].tags, base.entities[d.id].tags);
